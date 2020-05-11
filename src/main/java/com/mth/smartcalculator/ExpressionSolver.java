@@ -23,23 +23,25 @@ public final class ExpressionSolver {
 	
 	private ExpressionSolver() {}
 	
-	public static BigInteger solveExpression(String expression) {
-		String postFixExp = convert(expression);
+	public static BigInteger solveExpression(String infixExpression) {
+		String postFixExp = convertToPostfix(infixExpression);
 		return solvePostfix(postFixExp);
 	}
 	
-	private static String convert(String expression) {
+	private static String convertToPostfix(String expression) {
 		 operandStack = new ArrayDeque<>();
 
 		// Retira os espaços em branco para não atrapalhar (Considere que os operandos já foram verificados)
 		expression = expression.replaceAll("\\s" ,"");
 		if(expression.startsWith("-")) {
 			expression = expression.replaceFirst("-", "0-");
+		} else if (expression.startsWith("+")) {
+			expression = expression.replaceFirst("\\+", "");
 		}
 		
 		String[] symbolArr = expression.split("(?<=\\d)(?=\\D)|(?<=\\D)(?=\\d)|(?<=\\D)(?=\\D)");
 		
-		// Nova string onde irá ficar a nova expressão
+		// Nova string onde irá ficar a nova expressão postfix
 		StringBuilder postfixExp = new StringBuilder();
 		for(String symbol: symbolArr) {
 			if(isBigInteger(symbol)) {

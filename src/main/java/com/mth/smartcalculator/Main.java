@@ -8,6 +8,7 @@ package com.mth.smartcalculator;
  	* Operações sem sinais simplificados: 8 +++ 7 -- 5 -> 20
  	* Expressões com parenteses: 25 * (5 + 3) - 8 -> 192
  	* Variaveis: a = 10; 5*a + 7 -> 57
+ 	* Multiplicação sem precisar do *: 3(8a + 3) -> 249
  	* Comandos: /exit; /help; /var
  	* Números inteiros de valores maiores que Integer.MAX_VALUE: 500000000000 + 456789456123 -> 956789456123
 */
@@ -33,7 +34,6 @@ public class Main {
         	String expression = scanner.nextLine();
         	try {
         		expression = simplify(expression);
-        		
         		if(!expression.equals("")) {
         			ans = expressionTreatment(expression);
         			System.out.println(ans);
@@ -54,7 +54,6 @@ public class Main {
 		}
 		
 		// Tratamento de expressão comum
-		
 		return ExpressionSolver.solveExpression(expression).toString();
 	}
 	
@@ -99,6 +98,11 @@ public class Main {
 		
 		// Retira os espaços
 		expression = expression.replaceAll("\\s", "");
+		
+		// Substitui número junto a um parenteses/variável em uma multiplicação
+		expression = expression.replaceAll("(\\d)([a-zA-Z(])", "$1*$2");
+		expression = expression.replaceAll("([a-zA-Z])([(])", "$1*$2");
+		
 		int normalSize = expression.length();
 		
 		// Checa se não possui caracteres invalidos
@@ -110,7 +114,12 @@ public class Main {
 		if (expression.replaceAll("(\\*{2,})|(/{2,})", "").length() != normalSize) {
 			throw new InvalidExpressionException("Invalid expression");
 		}
-
+		
+		// Checa se não possui variáveis de nome invalido. Ex: a5, n7n
+		if (expression.replaceAll("[a-zA-Z]\\d", "").length() != normalSize) {
+			throw new InvalidExpressionException("Invalid variable(s) name");
+		}
+		
 		// Se possuir variaveis, substitui pelos valores corretos
 		if (expression.replaceAll("[a-zA-Z]", "").length() != normalSize) {
 			expression = changeVariablesToValues(expression);
@@ -143,8 +152,8 @@ public class Main {
 		}
 		
 		// Checa se esta atribuindo variáveis diretamente 
-		String[] pair = expression.split("=");
-		variables.put(pair[0], pair[1]);
+		String[] pair = expression.split("=[+]?");
+		variables.put(pair[0], pair[1].startsWith("+") ? pair[1].replaceFirst("\\+","") : pair[1]);
 		
 		return "";
 	}
@@ -153,11 +162,11 @@ public class Main {
 		// Se a key não for achada, joga o Exception
 		return Optional.
 				ofNullable(variables.get(varName)).
-				orElseThrow(() -> new InvalidExpressionException("Unknown variable"));
+				orElseThrow(() -> new InvalidExpressionException("Unknown variable: '" + varName + "'"));
 	}
 	
 	private static String changeVariablesToValues(String expression) {
-		Pattern keyPattern = Pattern.compile("[A-z]+");
+		Pattern keyPattern = Pattern.compile("[a-zA-Z]+");
 		Matcher keyMatcher = keyPattern.matcher(expression);
 		
 		while(keyMatcher.find()) {
@@ -177,12 +186,16 @@ public class Main {
 					"9 +++ 10 -- 8 \n" +
 					"14  *   12 \n" +
 					"a=4 \n" +
+					"b = 3 \n" +
+					"c = a \n" +
 					"a*2+b*3+c*(2+3) \n" +
+					"5a + b(3 + c) + c^2(30/2) \n" +
 					"Examples of commands: \n" + 
 					"/help: prints this message \n" +
 					"/var: show all variables value \n" +
 					"/exit: terminate program";
 		} else if (code.equals("/var")) {
+			System.out.println("Values of each variable:");
 			variables.forEach((k,v) -> System.out.println(k + " = " + v));
 			return "";
 		} else {
