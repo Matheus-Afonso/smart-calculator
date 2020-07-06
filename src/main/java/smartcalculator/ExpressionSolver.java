@@ -1,4 +1,4 @@
-package com.mth.smartcalculator;
+package smartcalculator;
 
 import java.math.BigInteger;
 import java.util.ArrayDeque;
@@ -15,6 +15,7 @@ public final class ExpressionSolver {
 															"^", 3,
 															"(", 4);
 	private static Deque<String> operandStack;
+	private static final String INVALID_EXPRESSION = "Expressao Invalida";
 	
 	/**
 	 * Precisa receber a expressao no formato String e sem espaços
@@ -53,7 +54,7 @@ public final class ExpressionSolver {
 
 		// Checa se não sobrou nenhum parenteses no stack
 		if(operandStack.contains("(") || operandStack.contains(")")) {
-			throw new InvalidExpressionException("Invalid expression");
+			throw new InvalidExpressionException(INVALID_EXPRESSION);
 		}
 		
 		while(!operandStack.isEmpty()) {
@@ -72,14 +73,14 @@ public final class ExpressionSolver {
 		} else if (operand.equals(")")) {
 			// Joga todos os operandos do stack para o postfix até achar o "("
 			if(headSymbol == null) {
-				throw new InvalidExpressionException("Invalid expression");
+				throw new InvalidExpressionException(INVALID_EXPRESSION);
 			}
 			
 			while(!headSymbol.equals("(")) {
 				postFixExp.append(operandStack.pollLast()).append(" ");
 				headSymbol = Optional
 							.ofNullable(operandStack.peekLast())
-							.orElseThrow(() -> new InvalidExpressionException("Invalid expression"));
+							.orElseThrow(() -> new InvalidExpressionException(INVALID_EXPRESSION));
 			}
 
 			// Quando achar o parenteses, joga ele fora
@@ -140,7 +141,7 @@ public final class ExpressionSolver {
 			case "^":
 				return num1.pow(num2.intValue());
 			default:
-				throw new InvalidExpressionException("Error: Aritmethic symbol '" + symbol + "' is not valid");
+				throw new InvalidExpressionException("Erro: Simbolo aritmetico: '" + symbol + "' nao eh valido");
 		}
 	}
 

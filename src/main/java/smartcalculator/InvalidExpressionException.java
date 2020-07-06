@@ -1,4 +1,4 @@
-package com.mth.smartcalculator;
+package smartcalculator;
 
 class InvalidExpressionException extends RuntimeException {
 
