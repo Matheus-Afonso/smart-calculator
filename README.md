@@ -31,20 +31,20 @@ Comando | Descrição
 
 1. Expressão aritmética simplificada e não simplificada (Sabendo que ```++ = +``` e ```-- = -```)
 
-![ex1](/images/ex1.png)
+![ex1](/images/ex1.PNG)
 
 2. Expressão com parenteses:
 
-![ex2](/images/ex2.png)
+![ex2](/images/ex2.PNG)
 
 3. Salvar variáveis e usá-las. **As variáveis devem ser compostas apenas de letras**.
 
-![ex3](/images/ex3.png)
+![ex3](/images/ex3.PNG)
 
 4. Números inteiros muito grandes:
 
-![ex4](/images/ex4.png)
+![ex4](/images/ex4.PNG)
 
 5. Comandos:
 
-![ex5](/images/ex5.png)
+![ex5](/images/ex5.PNG)
